@@ -6,11 +6,15 @@ class Game #< StatTracker
               :away_goals,
               :home_goals,
               :away_team,
-              :home_team
+              :home_team,
+              :away_team_id,
+              :home_team_id
   
     def initialize(info)
     @game_id = info[0]
     @season = info[1]
+    @away_team_id = info[4]
+    @home_team_id = info[5]
     @away_goals = info[6].to_i
     @home_goals = info[7].to_i
     @away_team = Hash.new(0)
