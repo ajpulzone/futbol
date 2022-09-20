@@ -1,16 +1,19 @@
 require "csv"
 require_relative './team'
 require_relative './game'
+require_relative './league_statistics_module'
 
 class StatTracker
-  attr_accessor :games
+  include LeagueStatistics
+
+  attr_accessor :games, :teams
 
   def initialize
     @games = Hash.new(0)
     @teams = Hash.new(0)
   end
-  
-  def self.from_csv(locations) 
+
+  def self.from_csv(locations)
     stat_tracker = new
     game_csv_reader(locations, stat_tracker)
     game_teams_csv_reader(locations, stat_tracker)
@@ -27,7 +30,7 @@ class StatTracker
   def self.game_teams_csv_reader(locations, stat_tracker)
     count = 0
     CSV.foreach locations[:game_teams], headers: true, header_converters: :symbol do |row|
-      if count.even? 
+      if count.even?
         stat_tracker.games[row[0].to_sym].import_away_team_data(row)
       else count.odd?
         stat_tracker.games[row[0].to_sym].import_home_team_data(row)
@@ -69,30 +72,30 @@ class StatTracker
 
   # Method to return name of the team with the highest average number of goals
   # scored per game across all seasons.
-  def best_offense
-    teams_hash = total_goals_by_team
-    teams_hash.update(teams_hash) do |team_id, total_goals|
-      total_goals / ((@games_reader[:away_team_id].find_all {|element| element == team_id}).count +
-      @games_reader[:home_team_id].find_all {|element| element == team_id}.count)
-    end
-    team_name_from_id(teams_hash.key(teams_hash.values.max))
-  end
+  # def best_offense
+  #   teams_hash = total_goals_by_team
+  #   teams_hash.update(teams_hash) do |team_id, total_goals|
+  #     total_goals / ((@games_reader[:away_team_id].find_all {|element| element == team_id}).count +
+  #     @games_reader[:home_team_id].find_all {|element| element == team_id}.count)
+  #   end
+  #   team_name_from_id(teams_hash.key(teams_hash.values.max))
+  # end
 
   # Helper method to return a hash with team ID keys and total goals by team
   # values
-  def total_goals_by_team
-    teams_hash = Hash.new(0)
-    @teams_reader[:team_id].each do |team|
-      @games_reader.each do |line|
-        if line[:away_team_id] == team
-          teams_hash[team] += line[:away_goals].to_f
-        elsif line[:home_team_id] == team
-          teams_hash[team] += line[:home_goals].to_f
-        end
-      end
-    end
-    teams_hash
-  end
+  # def total_goals_by_team
+  #   teams_hash = Hash.new(0)
+  #   @teams_reader[:team_id].each do |team|
+  #     @games_reader.each do |line|
+  #       if line[:away_team_id] == team
+  #         teams_hash[team] += line[:away_goals].to_f
+  #       elsif line[:home_team_id] == team
+  #         teams_hash[team] += line[:home_goals].to_f
+  #       end
+  #     end
+  #   end
+  #   teams_hash
+  # end
 
   # Helper method to return a team name from a team ID argument
   def team_name_from_id(team_id)
@@ -162,9 +165,9 @@ class StatTracker
     team_name_from_id(teams_hash.key(teams_hash.values.min))
   end
 
-  def count_of_teams
-   @teams_reader.length
-  end
+  # def count_of_teams
+  #  @teams_reader.length
+  # end
 
   def unique_total_goals
     goal_totals = []
@@ -229,7 +232,7 @@ class StatTracker
   # def count_of_games_by_season
   #   'empty string'
   # end
-  
+
   def count_of_games_by_season
     # require "pry"; binding.pry
     seasons = Hash.new(0)
