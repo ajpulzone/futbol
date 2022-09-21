@@ -2,9 +2,11 @@ require "csv"
 require_relative './team'
 require_relative './game'
 require_relative './league_statistics_module'
+require_relative './season_statistics_module'
 
 class StatTracker
   include LeagueStatistics
+  include SeasonStatistics
 
   attr_accessor :games, :teams
 
@@ -403,85 +405,85 @@ class StatTracker
     team_name_from_id(team_tackles.key(team_tackles.values.min))
   end
 
-  def coach_results(result, season_id)
-    coaches = Hash.new(0.0)
-    @game_teams_reader.each do |row|
-      if row[:game_id][0..3] == season_id[0..3] && row[:result] == result
-        coaches[row[:head_coach]] += 1.0
-      end
-    end
-    coaches
-  end
+  # def coach_results(result, season_id)
+  #   coaches = Hash.new(0.0)
+  #   @game_teams_reader.each do |row|
+  #     if row[:game_id][0..3] == season_id[0..3] && row[:result] == result
+  #       coaches[row[:head_coach]] += 1.0
+  #     end
+  #   end
+  #   coaches
+  # end
+  # 
+  # def games_by_head_coach(season_id)
+  #   games_by_coach = Hash.new(0)
+  #   @game_teams_reader.each do |row|
+  #     if row[:game_id][0..3] == season_id[0..3]
+  #       games_by_coach[row[:head_coach]] += 1
+  #     end
+  #   end
+  #   games_by_coach
+  # end
+  # 
+  # def winningest_coach(season_id)
+  #   coaches = coach_results("WIN", season_id)
+  #   games_by_coach = games_by_head_coach(season_id)
+  #   coach_win_percentages = Hash.new(0.0)
+  #   games_by_coach.each do |coach, games|
+  #     coach_win_percentages[coach] = (coaches[coach])/(games_by_coach[coach])
+  #   end
+  #   coach_win_percentages.key(coach_win_percentages.values.max)
+  # end
 
-  def games_by_head_coach(season_id)
-    games_by_coach = Hash.new(0)
-    @game_teams_reader.each do |row|
-      if row[:game_id][0..3] == season_id[0..3]
-        games_by_coach[row[:head_coach]] += 1
-      end
-    end
-    games_by_coach
-  end
-
-  def winningest_coach(season_id)
-    coaches = coach_results("WIN", season_id)
-    games_by_coach = games_by_head_coach(season_id)
-    coach_win_percentages = Hash.new(0.0)
-    games_by_coach.each do |coach, games|
-      coach_win_percentages[coach] = (coaches[coach])/(games_by_coach[coach])
-    end
-    coach_win_percentages.key(coach_win_percentages.values.max)
-  end
-
-  def worst_coach(season_id)
-    coaches = coach_results("WIN", season_id)
-    games_by_coach = games_by_head_coach(season_id)
-    coach_win_percentages = Hash.new(0.0)
-    games_by_coach.each do |coach, games|
-      coach_win_percentages[coach] = (coaches[coach])/(games_by_coach[coach])
-    end
-    coach_win_percentages.key(coach_win_percentages.values.min)
-  end
+  # def worst_coach(season_id)
+  #   coaches = coach_results("WIN", season_id)
+  #   games_by_coach = games_by_head_coach(season_id)
+  #   coach_win_percentages = Hash.new(0.0)
+  #   games_by_coach.each do |coach, games|
+  #     coach_win_percentages[coach] = (coaches[coach])/(games_by_coach[coach])
+  #   end
+  #   coach_win_percentages.key(coach_win_percentages.values.min)
+  # end
 
   # Helper method to return hash of teams with team id keys and values of
   # total goals for the season
-  def total_goals_by_team_season(season)
-    team_scores = Hash.new(0)
-    teams_array = @teams_reader[:team_id]
-    teams_array.each do |team|
-      @game_teams_reader.each do |line|
-        team_scores[team] += (line[:goals]).to_i if line[:team_id] == team && line[:game_id][0..3] == season[0..3]
-      end
-    end
-    team_scores
-  end
+  # def total_goals_by_team_season(season)
+  #   team_scores = Hash.new(0)
+  #   teams_array = @teams_reader[:team_id]
+  #   teams_array.each do |team|
+  #     @game_teams_reader.each do |line|
+  #       team_scores[team] += (line[:goals]).to_i if line[:team_id] == team && line[:game_id][0..3] == season[0..3]
+  #     end
+  #   end
+  #   team_scores
+  # end
 
   # Helper method to return hash of teams with team id keys and values of
   # total shots for the season
-  def total_shots_by_team_season(season)
-    teams_array = @teams_reader[:team_id]
-    team_shots = Hash.new(0)
-    teams_array.each do |team|
-      @game_teams_reader.each do |line|
-        team_shots[team] += line[:shots].to_f if line[:team_id] == team && line[:game_id][0..3] == season[0..3]
-      end
-    end
-    team_shots
-  end
+  # def total_shots_by_team_season(season)
+  #   teams_array = @teams_reader[:team_id]
+  #   team_shots = Hash.new(0)
+  #   teams_array.each do |team|
+  #     @game_teams_reader.each do |line|
+  #       team_shots[team] += line[:shots].to_f if line[:team_id] == team && line[:game_id][0..3] == season[0..3]
+  #     end
+  #   end
+  #   team_shots
+  # end
 
   # Method to return the name of the Team with the best ratio of shots to goals
   # for the season
-  def most_accurate_team(season)
-    team_scores = accuracy_by_team_season(season)
-    team_name_from_id(team_scores.key(team_scores.values.max))
-  end
+  # def most_accurate_team(season)
+  #   team_scores = accuracy_by_team_season(season)
+  #   team_name_from_id(team_scores.key(team_scores.values.max))
+  # end
 
   # Method to return the name of the Team with the worst ratio of shots to goals
   # for the season
-  def least_accurate_team(season)
-    team_scores = accuracy_by_team_season(season)
-    team_name_from_id(team_scores.key(team_scores.values.min))
-  end
+  # def least_accurate_team(season)
+  #   team_scores = accuracy_by_team_season(season)
+  #   team_name_from_id(team_scores.key(team_scores.values.min))
+  # end
 
   # Helper method to return hash of teams with team id keys and values of
   # goals / shots for the season

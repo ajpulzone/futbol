@@ -110,6 +110,33 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.fewest_tackles('20122013')).to eq('New England Revolution')
   end
 
+  it "#coach_results" do
+    expect(stat_tracker1.coach_results("20122013")).to eq({'6' => 2.0,})
+    expect(stat_tracker1.coach_results("20132014")).to eq({'30' => 1.0,})
+  end
+  
+  it "#games_played_in_season" do
+    result = {'3' => 1, '6' => 2, '5' => 1}
+    expect(stat_tracker1.games_played_in_season('20122013')).to eq(result)
+  end
+  
+  it "#winningest_coach returns the name of the Coach with the best win 
+  percentage for the season" do
+    expect(stat_tracker1.winningest_coach('20122013')).to eq('Claude Julien')
+    expect(stat_tracker1.winningest_coach('20162017')).to eq('Randy Carlyle')
+  end
+  
+  it "#worst_coach returns the name of the Coach with the worst win 
+  percentage for the season" do
+    expect(stat_tracker1.worst_coach('20122013')).to eq('Claude Julien')
+    expect(stat_tracker1.worst_coach('20162017')).to eq('Randy Carlyle')
+  end
+  
+  it "#most_accurate_team returns the name of the Team with the best ratio of 
+  shots to goals for the season" do
+    expect(stat_tracker1.most_accurate_team('20122013')).to eq('Houston Dynamo')
+  end
+  
   xit "4. #count_of_teams" do
     dummy_filepath = {teams: "./data/team_dummy.csv",
     games: './data/games_dummy_2.csv',
@@ -253,32 +280,32 @@ RSpec.describe StatTracker do
     expect(stat_tracker.fewest_goals_scored("6")).to eq(2)
   end
 
-  xit "#. coach_results" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.coach_results("WIN", "20122013")).to eq({"Claude Julien"=>5.0})
-  end
+  # it "#. coach_results" do
+  #   dummy_filepath = {teams: "./data/team_dummy.csv",
+  #                     games: './data/games_dummy_2.csv',
+  #                     game_teams: './data/game_teams_dumdum.csv'
+  #   }
+  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
+  #   expect(stat_tracker.coach_results("WIN", "20122013")).to eq({"Claude Julien"=>5.0})
+  # end
 
-  xit "#. games_by_head_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.games_by_head_coach("20122013")).to eq({"John Tortorella"=>5, "Claude Julien"=>5, "Paul MacLean"=>1, "Michel Therrien"=>1})
-  end
-
-  xit "#. winningest_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_3.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
-  end
+  # xit "#. games_by_head_coach" do
+  #   dummy_filepath = {teams: "./data/team_dummy.csv",
+  #                     games: './data/games_dummy_2.csv',
+  #                     game_teams: './data/game_teams_dumdum.csv'
+  #   }
+  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
+  #   expect(stat_tracker.games_by_head_coach("20122013")).to eq({"John Tortorella"=>5, "Claude Julien"=>5, "Paul MacLean"=>1, "Michel Therrien"=>1})
+  # end
+  # 
+  # xit "#. winningest_coach" do
+  #   dummy_filepath = {teams: "./data/team_dummy.csv",
+  #                     games: './data/games_dummy_2.csv',
+  #                     game_teams: './data/game_teams_3.csv'
+  #   }
+  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
+  #   expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
+  # end
 
   xit "#. games_by_team_by_result" do
     dummy_filepath = {teams: "./data/teams.csv",
@@ -363,23 +390,23 @@ RSpec.describe StatTracker do
   #   expect(stat_tracker.favorite_opponent('6')).to eq('Houston Dynamo')
   # end
 
-  xit "#. winningest_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_3.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
-  end
+  # xit "#. winningest_coach" do
+  #   dummy_filepath = {teams: "./data/team_dummy.csv",
+  #                     games: './data/games_dummy_2.csv',
+  #                     game_teams: './data/game_teams_3.csv'
+  #   }
+  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
+  #   expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
+  # end
 
-  xit "#. worst_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_3.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.worst_coach("20122013")).to eq("John Tortorella")
-  end
+  # xit "#. worst_coach" do
+  #   dummy_filepath = {teams: "./data/team_dummy.csv",
+  #                     games: './data/games_dummy_2.csv',
+  #                     game_teams: './data/game_teams_3.csv'
+  #   }
+  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
+  #   expect(stat_tracker.worst_coach("20122013")).to eq("John Tortorella")
+  # end
 
 
 
