@@ -1,4 +1,4 @@
-require './lib/stat_tracker'
+require_relative './stat_tracker'
 
 class Game #< StatTracker
   attr_reader :game_id,
@@ -9,7 +9,7 @@ class Game #< StatTracker
               :home_team,
               :away_team_id,
               :home_team_id
-  
+
     def initialize(info)
     @game_id = info[0]
     @season = info[1]

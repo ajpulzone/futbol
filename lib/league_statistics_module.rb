@@ -1,7 +1,7 @@
 module LeagueStatistics
 
   def count_of_teams
-    @teams.size.to_s
+    @teams.size
   end
 
   def best_offense
@@ -34,7 +34,7 @@ module LeagueStatistics
     end
     teams_hash
   end
-  
+
   def total_goals_by_team_by_at(at)
     teams_hash = Hash.new(0.0)
     @teams.keys.each do |team|
@@ -45,7 +45,24 @@ module LeagueStatistics
     end
     teams_hash
   end
-  
+
+#This method is not working as intended right now, still need to rework
+  # def  total_goals_home_or_away(hoa, min_or_max)
+  #   #the id's are going to be the keys, the values
+  #   teams_hash = total_goals_by_team_by_at(hoa)
+  #   if hoa = "home"
+  #     game_count = @games.select {|game_id, game_object| team_id == game_object.home_team_id}.count
+  #   else
+  #     game_count = @games.select {|game_id, game_object| team_id == game_object.away_team_id}.count
+  #   end
+  #   teams_hash.update(teams_hash) do |team_id, goals|
+  #     goals / game_count
+  #   end
+  #   require "pry";binding.pry
+  #   highest_scoring_home_team_id = teams_hash.key(teams_hash.values.max) if min_or_max == "max"
+  #   highest_scoring_home_team_id = teams_hash.key(teams_hash.values.min) if min_or_max == "min"
+  # end
+
   def highest_scoring_home_team
     teams_hash = total_goals_by_team_by_at('home')
     teams_hash.update(teams_hash) do |team_id, goals|
@@ -54,7 +71,7 @@ module LeagueStatistics
     highest_scoring_home_team_id = teams_hash.key(teams_hash.values.max)
     @teams[highest_scoring_home_team_id].team_name
   end
-  
+
   def lowest_scoring_home_team
     teams_hash = total_goals_by_team_by_at('home')
     teams_hash.update(teams_hash) do |team_id, goals|
@@ -63,7 +80,7 @@ module LeagueStatistics
     lowest_scoring_home_team_id = teams_hash.key(teams_hash.values.min)
     @teams[lowest_scoring_home_team_id].team_name
   end
-  
+
   def highest_scoring_visitor
     teams_hash = total_goals_by_team_by_at('away')
     teams_hash.update(teams_hash) do |team_id, goals|
@@ -72,7 +89,7 @@ module LeagueStatistics
     highest_scoring_away_team_id = teams_hash.key(teams_hash.values.max)
     @teams[highest_scoring_away_team_id].team_name
   end
-  
+
   def lowest_scoring_visitor
     teams_hash = total_goals_by_team_by_at('away')
     teams_hash.update(teams_hash) do |team_id, goals|
@@ -82,24 +99,3 @@ module LeagueStatistics
     @teams[lowest_scoring_away_team_id].team_name
   end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

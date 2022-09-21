@@ -29,26 +29,26 @@ RSpec.describe StatTracker do
   end
 
   it "#count_of_teams: returns the total number of teams in the data set" do
-    expect(stat_tracker1.count_of_teams).to eq("32")
+    expect(stat_tracker1.count_of_teams).to eq(32)
   end
 
   it "#best_offense: Name of the team with the highest average number of goals
   scored per game across all seasons" do
     expect(stat_tracker1.best_offense).to eq("Toronto FC")
   end
-  
+
   it "#worst_offense name of the team with the lowest average number of goals
   scored per game across all seasons." do
   expect(stat_tracker1.worst_offense).to eq('Orlando City SC')
   end
-  
+
   it "#total_goals_by_team: returns a hash with team_id as the key, and total
   goals at away or home depending on the argument passed" do
   result = {"6"=>4.0, "3"=>6.0, "5"=>5.0, "30"=> 1.0, "24"=>6.0, "20"=>7.0,
     "21"=>2.0}
     expect(stat_tracker1.total_goals_by_team).to eq(result)
   end
-  
+
   it "#highest_scoring_home_team returns name of the team with the highest
   average score per game across all seasons when they are home." do
   expect(stat_tracker1.highest_scoring_home_team).to eq('Real Salt Lake')
@@ -66,6 +66,10 @@ RSpec.describe StatTracker do
 
   away = {'3' => 6.0, '5' => 0.0, '20' => 7.0, '24' => 3.0, '30' => 1.0}
   expect(stat_tracker1.total_goals_by_team_by_at('away')).to eq(away)
+  end
+
+  xit "#total_goals_home_or_away returns the team id who meets the argument criteria" do
+    expect(stat_tracker1.total_goals_home_or_away("home", "max")).to eq("24")
   end
 
   it "#highest_scoring_visitor returns name of the team with the highest
