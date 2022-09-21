@@ -72,12 +72,12 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.total_goals_home_or_away("home", "max")).to eq("24")
   end
 
-  it "#highest_scoring_visitor returns name of the team with the highest
+  xit "#highest_scoring_visitor returns name of the team with the highest
   average score per game across all seasons when they are away." do
   expect(stat_tracker1.highest_scoring_visitor).to eq('Toronto FC')
   end
 
-  it "#lowest_scoring_visitor returns name of the team with the lowest
+  xit "#lowest_scoring_visitor returns name of the team with the lowest
   average score per game across all seasons when they are away." do
   expect(stat_tracker1.lowest_scoring_visitor).to eq('Sporting Kansas City')
   end
@@ -114,7 +114,7 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.fewest_tackles('20122013')).to eq('New England Revolution')
   end
 
-  xit "4. #count_of_teams" do
+  xit "#count_of_teams" do
     dummy_filepath = {teams: "./data/team_dummy.csv",
     games: './data/games_dummy_2.csv',
     game_teams: './data/game_teams.csv'
