@@ -18,7 +18,7 @@ module LeagueStatistics
     teams_hash = total_goals_by_team
     teams_hash.update(teams_hash) do |team_id, total_goals|
       total_goals / ((games.values.find_all {|game| game.away_team_id == team_id}).length +
-      (games.values.find_all {|game| game.home_team_id == team_id).length)
+      (games.values.find_all {|game| game.home_team_id == team_id}).length)
     end
     best_offense_team_id = teams_hash.key(teams_hash.values.min)
     teams[best_offense_team_id].team_name
