@@ -88,6 +88,31 @@ module SeasonStatistics
     losing_team.last.team_name
   end
   
+  def most_tackles(season)
+    tackles_by_team = Hash.new(0)
+    @games.each do |game_id, game_object|
+      if game_object.season == season
+        tackles_by_team[game_object.home_team_id] += game_object.home_team[:tackles]
+        tackles_by_team[game_object.away_team_id] += game_object.away_team[:tackles]
+      end
+    end
+    most_tackles_team_id = tackles_by_team.key(tackles_by_team.values.max)
+    most_tackles_team = @teams.find  {|team_id, team_object| team_id == most_tackles_team_id}
+    most_tackles_team.last.team_name
+  end
+  
+  def fewest_tackles(season)
+    tackles_by_team = Hash.new(0)
+    @games.each do |game_id, game_object|
+      if game_object.season == season
+        tackles_by_team[game_object.home_team_id] += game_object.home_team[:tackles]
+        tackles_by_team[game_object.away_team_id] += game_object.away_team[:tackles]
+      end
+    end
+    fewest_tackles_team_id = tackles_by_team.key(tackles_by_team.values.min)
+    fewest_tackles_team = @teams.find  {|team_id, team_object| team_id == fewest_tackles_team_id}
+    fewest_tackles_team.last.team_name
+  end
 end
 
 

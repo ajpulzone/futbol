@@ -385,25 +385,25 @@ class StatTracker
   #   team_name_from_id(wol_by_team.key(wol_by_team.values.max))
   # end
 
-  def most_tackles(season)
-    team_tackles = Hash.new(0)
-    @teams_reader[:team_id].each do |team|
-      @game_teams_reader.each do |line|
-        team_tackles[team] += line[:tackles].to_i if line[:game_id][0..3] == season[0..3] && line[:team_id] == team
-      end
-    end
-    team_name_from_id(team_tackles.key(team_tackles.values.max))
-  end
-
-  def fewest_tackles(season)
-    team_tackles = Hash.new(0)
-    @teams_reader[:team_id].each do |team|
-      @game_teams_reader.each do |line|
-        team_tackles[team] += line[:tackles].to_i if line[:game_id][0..3] == season[0..3] && line[:team_id] == team
-      end
-    end
-    team_name_from_id(team_tackles.key(team_tackles.values.min))
-  end
+  # def most_tackles(season)
+  #   team_tackles = Hash.new(0)
+  #   @teams_reader[:team_id].each do |team|
+  #     @game_teams_reader.each do |line|
+  #       team_tackles[team] += line[:tackles].to_i if line[:game_id][0..3] == season[0..3] && line[:team_id] == team
+  #     end
+  #   end
+  #   team_name_from_id(team_tackles.key(team_tackles.values.max))
+  # end
+  # 
+  # def fewest_tackles(season)
+  #   team_tackles = Hash.new(0)
+  #   @teams_reader[:team_id].each do |team|
+  #     @game_teams_reader.each do |line|
+  #       team_tackles[team] += line[:tackles].to_i if line[:game_id][0..3] == season[0..3] && line[:team_id] == team
+  #     end
+  #   end
+  #   team_name_from_id(team_tackles.key(team_tackles.values.min))
+  # end
 
   # def coach_results(result, season_id)
   #   coaches = Hash.new(0.0)

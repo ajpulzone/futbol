@@ -142,6 +142,14 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.least_accurate_team('20122013')).to eq('Sporting Kansas City')
   end
   
+  it "#most_tackles name of the Team with the most tackles in the season" do
+    expect(stat_tracker1.most_tackles('20122013')).to eq('FC Dallas')
+  end
+  
+  it "#fewest_tackles name of the Team with the most tackles in the season" do
+    expect(stat_tracker1.fewest_tackles('20122013')).to eq('Sporting Kansas City')
+  end
+  
   xit "4. #count_of_teams" do
     dummy_filepath = {teams: "./data/team_dummy.csv",
     games: './data/games_dummy_2.csv',
