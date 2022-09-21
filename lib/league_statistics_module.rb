@@ -7,8 +7,8 @@ module LeagueStatistics
   def best_offense
     teams_hash = total_goals_by_team
     teams_hash.update(teams_hash) do |team_id, total_goals|
-      total_goals / ((games.values.find_all {|game| game.away_team[:team_id] == team_id.to_s}).count +
-      (games.values.find_all {|game| game.home_team[:team_id] == team_id.to_s}).count)
+      total_goals / ((games.values.find_all {|game| game.away_team_id == team_id.to_s}).count +
+      (games.values.find_all {|game| game.home_team_id == team_id.to_s}).count)
     end
     best_offense_team_id = teams_hash.key(teams_hash.values.max)
     teams[best_offense_team_id].team_name
@@ -17,8 +17,8 @@ module LeagueStatistics
   def worst_offense
     teams_hash = total_goals_by_team
     teams_hash.update(teams_hash) do |team_id, total_goals|
-      total_goals / ((games.values.find_all {|game| game.away_team[:team_id] == team_id.to_s}).count +
-      (games.values.find_all {|game| game.home_team[:team_id] == team_id.to_s}).count)
+      total_goals / ((games.values.find_all {|game| game.away_team_id == team_id.to_s}).count +
+      (games.values.find_all {|game| game.home_team_id == team_id.to_s}).count)
     end
     best_offense_team_id = teams_hash.key(teams_hash.values.min)
     teams[best_offense_team_id].team_name
@@ -28,8 +28,8 @@ module LeagueStatistics
     teams_hash = Hash.new(0.0)
     teams.keys.each do |team|
       games.values.each do |game|
-        teams_hash[team] += game.away_goals if game.away_team[:team_id] == team.to_s
-        teams_hash[team] += game.home_goals if game.home_team[:team_id] == team.to_s
+        teams_hash[team] += game.away_goals if game.away_team_id == team.to_s
+        teams_hash[team] += game.home_goals if game.home_team_id == team.to_s
       end
     end
     teams_hash

@@ -1,6 +1,6 @@
 require_relative './stat_tracker'
 
-class Game #< StatTracker
+class Game
   attr_reader :game_id,
               :season,
               :away_goals,
@@ -9,8 +9,8 @@ class Game #< StatTracker
               :home_team,
               :away_team_id,
               :home_team_id
-  
-    def initialize(info)
+
+  def initialize(info)
     @game_id = info[0]
     @season = info[1]
     @away_team_id = info[4]
@@ -22,23 +22,18 @@ class Game #< StatTracker
   end
 
   def import_away_team_data(game_teams_data)
-    @away_team = {:team_id => game_teams_data[1],
-                  :result => game_teams_data[3],
+    @away_team = {:result => game_teams_data[3],
                   :head_coach => game_teams_data[5],
-                  # # goals: game_teams_data_0[6],
                   :shots => game_teams_data[7].to_f,
                   :tackles => game_teams_data[8].to_f
                   }
   end
 
   def import_home_team_data(game_teams_data)
-    @home_team = {:team_id => game_teams_data[1],
-                  :result => game_teams_data[3],
+    @home_team = {:result => game_teams_data[3],
                   :head_coach => game_teams_data[5],
-                  # goals: game_teams_data_1[6],
                   :shots => game_teams_data[7].to_f,
                   :tackles => game_teams_data[8].to_f
-                }
+                 }
   end
-
 end
