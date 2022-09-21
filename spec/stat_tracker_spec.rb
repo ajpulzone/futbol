@@ -7,12 +7,16 @@ require './lib/team_statistics'
 require './lib/team_game'
 
 RSpec.describe StatTracker do
+  dummy_filepath1 = {teams: "./data/teams.csv",
+                    games: './data/games_dummy1.2.csv',
+                    game_teams: './data/game_teams_dummy1.2.csv'
+                    }
   dummy_filepath = {teams: './data/teams.csv',
                     games: './data/games_dummy_final.csv',
                     game_teams: './data/game_teams_dummy_final.csv'
-
-  }
+                    }
   let(:stat_tracker) {StatTracker.from_csv(dummy_filepath)}
+  let(:stat_tracker1) {StatTracker.from_csv(dummy_filepath1)}
 
   it "1. exists" do
     expect(stat_tracker).to be_a(StatTracker)
@@ -21,13 +25,20 @@ RSpec.describe StatTracker do
   it "2. has readable attributes 'games' and 'teams' that are hashes by" do
     expect(stat_tracker.teams).to be_a(Hash)
     expect(stat_tracker.games).to be_a(Hash)
-  
+    
+  end
+  it "#count_of_teams: returns the total number of teams in the data set" do
+    expect(stat_tracker1.count_of_teams).to eq(32)
   end
 
-  xit "3. can parse CSV data" do
-    expect(stat_tracker1.teams_reader[0][:team_id]).to eq("1")
-    expect(stat_tracker1.teams_reader[0][:franchiseid]).to eq("23")
-    expect(stat_tracker1.teams_reader[4][:link]).to eq("/api/v1/teams/6")
+  it "#best_offense: Name of the team with the highest average number of goals
+  scored per game across all seasons" do
+    expect(stat_tracker1.best_offense).to eq("Toronto FC")
+  end
+  
+  it "#worst_offense name of the team with the lowest average number of goals
+  scored per game across all seasons." do
+    expect(stat_tracker1.worst_offense).to eq('Orlando City SC')
   end
 
   it "#average_goals_per_game returns the average number of goals scored in a
@@ -45,68 +56,74 @@ RSpec.describe StatTracker do
     expect(stat_tracker.average_goals_by_season).to eq(result)
   end
 
-  xit "#best_offense name of the team with the highest average number of goals
-  scored per game across all seasons." do
-    expect(stat_tracker1.best_offense).to eq("Toronto FC")
-  end
-
-  xit "#total_goals_by_team returns a hash with team_id as the key, and total
+  it "#total_goals_by_team: returns a hash with team_id as the key, and total
   goals at away or home depending on the argument passed" do
-    result = {"6"=>4.0, "3"=>6.0, "5"=>5.0, "30"=> 1.0, "24"=>6.0, "20"=>7.0,
-      "21"=>2.0}
+  result = {"6"=>4.0, "3"=>6.0, "5"=>5.0, "30"=> 1.0, "24"=>6.0, "20"=>7.0,
+    "21"=>2.0}
     expect(stat_tracker1.total_goals_by_team).to eq(result)
   end
-
-  xit "#team_name_from_id returns team name from ID passed as argument." do
-    expect(stat_tracker1.team_name_from_id('20')).to eq('Toronto FC')
-  end
-
-  xit "#worst_offense name of the team with the lowest average number of goals
-  scored per game across all seasons." do
-    expect(stat_tracker1.worst_offense).to eq('Orlando City SC')
-  end
-
-  xit "#highest_scoring_home_team returns name of the team with the highest
+  
+  it "#highest_scoring_home_team returns name of the team with the highest
   average score per game across all seasons when they are home." do
     expect(stat_tracker1.highest_scoring_home_team).to eq('Real Salt Lake')
   end
 
-  xit "#lowest_scoring_home_team returns name of the team with the lowest
+  it "#lowest_scoring_home_team returns name of the team with the lowest
   average score per game across all seasons when they are home." do
-    expect(stat_tracker1.lowest_scoring_home_team).to eq('Toronto FC')
+  expect(stat_tracker1.lowest_scoring_home_team).to eq('Toronto FC')
   end
 
-  xit "#total_goals_by_team_by_at returns hash with each team as a key
-  and total goals for the argument passed as values" do
-    home = {'6' => 4.0, '24' => 3.0, '20' => 0.0, '5' => 5.0, '21' => 2.0}
-    expect(stat_tracker1.total_goals_by_team_by_at(:home_team_id)).to eq(home)
 
-    away = {'3' => 6.0, '5' => 0.0, '20' => 7.0, '24' => 3.0, '30' => 1.0}
-    expect(stat_tracker1.total_goals_by_team_by_at(:away_team_id)).to eq(away)
-  end
-
-  xit "#highest_scoring_visitor returns name of the team with the highest
+  it "#highest_scoring_visitor returns name of the team with the highest
   average score per game across all seasons when they are away." do
-    expect(stat_tracker1.highest_scoring_visitor).to eq('Toronto FC')
+  expect(stat_tracker1.highest_scoring_visitor).to eq('Toronto FC')
   end
 
-  xit "#lowest_scoring_visitor returns name of the team with the lowest
+  it "#lowest_scoring_visitor returns name of the team with the lowest
   average score per game across all seasons when they are away." do
-    expect(stat_tracker1.lowest_scoring_visitor).to eq('Sporting Kansas City')
+  expect(stat_tracker1.lowest_scoring_visitor).to eq('Sporting Kansas City')
   end
 
-  xit '#most_tackles name of the Team with the most tackles in the season' do
-
-    expect(stat_tracker1.most_tackles('20122013')).to eq('Philadelphia Union')
+  it "#coach_results" do
+    result = {'Claude Julien' => 2, 'Dan Bylsma' => 0, 'John Tortorella' => 0}
+    expect(stat_tracker1.coach_results("20122013")).to eq(result)
+    result = {'Mike Yeo' => 1, 'Patrick Roy' => 0}
+    expect(stat_tracker1.coach_results("20132014")).to eq(result)
   end
-
-  xit '#fewest_tackles name of the Team with the fewest tackles in the season' do
-
-    expect(stat_tracker1.fewest_tackles('20122013')).to eq('New England Revolution')
+  
+  it "#games_played_in_season" do
+    result = {'Claude Julien' => 2, 'Dan Bylsma' => 1, 'John Tortorella' => 1.0}
+    expect(stat_tracker1.games_played_in_season('20122013')).to eq(result)
   end
-
-  it "#. count_of_teams" do
-    expect(stat_tracker.count_of_teams).to eq(32)
+  
+  it "#winningest_coach returns the name of the Coach with the best win 
+  percentage for the season" do
+    expect(stat_tracker1.winningest_coach('20122013')).to eq('Claude Julien')
+    expect(stat_tracker1.winningest_coach('20162017')).to eq('Randy Carlyle')
+  end
+  
+  it "#worst_coach returns the name of the Coach with the worst win 
+  percentage for the season" do
+    expect(stat_tracker1.worst_coach('20122013')).to eq('John Tortorella')
+    expect(stat_tracker1.worst_coach('20162017')).to eq('Glen Gulutzan')
+  end
+  
+  it "#most_accurate_team returns the name of the Team with the best ratio of 
+  shots to goals for the season" do
+    expect(stat_tracker1.most_accurate_team('20122013')).to eq('Houston Dynamo')
+  end
+  
+  it "#least_accurate_team returns the name of the Team with the worst ratio of 
+  shots to goals for the season" do
+    expect(stat_tracker1.least_accurate_team('20122013')).to eq('Sporting Kansas City')
+  end
+  
+  it "#most_tackles name of the Team with the most tackles in the season" do
+    expect(stat_tracker1.most_tackles('20122013')).to eq('FC Dallas')
+  end
+  
+  it "#fewest_tackles name of the Team with the most tackles in the season" do
+    expect(stat_tracker1.fewest_tackles('20122013')).to eq('Sporting Kansas City')
   end
 
   it "#. highest_total_score" do
@@ -149,33 +166,6 @@ RSpec.describe StatTracker do
     expect(stat_tracker.fewest_goals_scored("3")).to eq(1)
   end
 
-  xit "#. coach_results" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.coach_results("WIN", "20122013")).to eq({"Claude Julien"=>5.0})
-  end
-
-  xit "#. games_by_head_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.games_by_head_coach("20122013")).to eq({"John Tortorella"=>5, "Claude Julien"=>5, "Paul MacLean"=>1, "Michel Therrien"=>1})
-  end
-
-  xit "#. winningest_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_3.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
-  end
-
   it "#. games_by_team_by_result" do
     expect(stat_tracker.games_by_team_by_result("3", "WIN")).to eq({"6" => 0})
     expect(stat_tracker.games_by_team_by_result("3", "LOSS")).to eq({"6" => 5})
@@ -198,53 +188,12 @@ RSpec.describe StatTracker do
     expect(stat_tracker.rival("3")).to eq("FC Dallas")
   end
 
-  xit "#. winningest_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_3.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
-  end
-
-  xit "#. worst_coach" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_3.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.worst_coach("20122013")).to eq("John Tortorella")
-  end
-
-
   it "#. can determine best season for a team" do
     expect(stat_tracker.best_season("6")).to eq("20122013")
   end
   
-
   it "#. can determine best season for a team" do
     expect(stat_tracker.worst_season("3")).to eq("20122013")
-  end
-
-
-  xit "#most_accurate_team returns the name of the Team with the best ratio
-  of shots to goals for the season" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dummy1.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker1.most_accurate_team('20122013')).to eq('New York Red Bulls')
-  end
-
-  xit "#least_accurate_team returns the name of the Team with the best ratio
-  of shots to goals for the season" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dummy1.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker1.least_accurate_team('20122013')).to eq('New York City FC')
   end
 
   it "#. can list team info" do
@@ -255,51 +204,5 @@ RSpec.describe StatTracker do
     "link" => "/api/v1/teams/1"
     })
   end
-
-  xit "#total_goals_by_team_season returns hash of teams as keys and values
-  of goals for the season" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dummy1.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    result = {"6"=>3, "3"=>2, "5"=>1, "17"=>3, "16"=>2, "9"=>1, "8"=>3, "19"=>3}
-    expect(stat_tracker1.total_goals_by_team_season('20122013')).to eq(result)
-  end
-
-  xit "#total_shots_by_team_season returns hash of teams as keys and values
-  of shots for the season" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dummy1.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    result = {"6"=>12.0,
-             "3"=>8.0,
-             "5"=>6.0,
-             "17"=>12.0,
-             "16"=>10.0,
-             "9"=>7.0,
-             "8"=>8.0,
-             "19"=>14.0}
-    expect(stat_tracker1.total_shots_by_team_season('20122013')).to eq(result)
-  end
-
-  xit "#accuracy_by_team_season returns hash of teams as keys and values
-  of goals / shots for the season" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dummy1.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    result = {"6"=> 3/12.0,
-             "3"=> 2/8.0,
-             "5"=> 1/6.0,
-             "17"=> 3/12.0,
-             "16"=> 2/10.0,
-             "9"=> 1/7.0,
-             "8"=> 3/8.0,
-             "19"=> 3/14.0}
-    expect(stat_tracker1.accuracy_by_team_season('20122013')).to eq(result)
-  end
+  
 end
