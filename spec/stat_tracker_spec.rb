@@ -29,7 +29,7 @@ RSpec.describe StatTracker do
   end
 
   it "#count_of_teams: returns the total number of teams in the data set" do
-    expect(stat_tracker1.count_of_teams).to eq("32")
+    expect(stat_tracker1.count_of_teams).to eq(32)
   end
 
   it "#best_offense: Name of the team with the highest average number of goals
@@ -111,12 +111,14 @@ RSpec.describe StatTracker do
   end
 
   it "#coach_results" do
-    expect(stat_tracker1.coach_results("20122013")).to eq({'6' => 2.0,})
-    expect(stat_tracker1.coach_results("20132014")).to eq({'30' => 1.0,})
+    result = {'Claude Julien' => 2, 'Dan Bylsma' => 0, 'John Tortorella' => 0}
+    expect(stat_tracker1.coach_results("20122013")).to eq(result)
+    result = {'Mike Yeo' => 1, 'Patrick Roy' => 0}
+    expect(stat_tracker1.coach_results("20132014")).to eq(result)
   end
   
   it "#games_played_in_season" do
-    result = {'3' => 1, '6' => 2, '5' => 1}
+    result = {'Claude Julien' => 2, 'Dan Bylsma' => 1, 'John Tortorella' => 1.0}
     expect(stat_tracker1.games_played_in_season('20122013')).to eq(result)
   end
   
@@ -128,8 +130,8 @@ RSpec.describe StatTracker do
   
   it "#worst_coach returns the name of the Coach with the worst win 
   percentage for the season" do
-    expect(stat_tracker1.worst_coach('20122013')).to eq('Claude Julien')
-    expect(stat_tracker1.worst_coach('20162017')).to eq('Randy Carlyle')
+    expect(stat_tracker1.worst_coach('20122013')).to eq('John Tortorella')
+    expect(stat_tracker1.worst_coach('20162017')).to eq('Glen Gulutzan')
   end
   
   it "#most_accurate_team returns the name of the Team with the best ratio of 

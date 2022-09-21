@@ -1,22 +1,37 @@
 module SeasonStatistics
   
-  def coach_results(season)
-    team_wins_hash = Hash.new { |hash, key| hash[key] = 0.0 }
-    @games.each do |game_id, game|
-      if game.season == season
-        team_wins_hash[game.home_team_id] += 1 if game.home_team[:result] == "WIN"
-        team_wins_hash[game.away_team_id] += 1 if game.away_team[:result] == "WIN"
+  def coaches_by_season(season)
+    coaches_array = []
+    @games.each do |game_id, game_object|
+      if game_object.season == season
+        coaches_array << game_object.home_team[:head_coach]
+        coaches_array << game_object.away_team[:head_coach]
       end
     end
-    team_wins_hash
+    coaches_hash = Hash.new
+    coaches_array.uniq.each do |coach|
+      coaches_hash[coach] = 0
+    end
+    coaches_hash
+  end
+  
+  def coach_results(season)
+    coach_wins_hash = coaches_by_season(season) #Hash.new { |hash, key| hash[key] = 0.0 }
+    @games.each do |game_id, game|
+      if game.season == season
+        coach_wins_hash[game.home_team[:head_coach]] += 1 if game.home_team[:result] == "WIN"
+        coach_wins_hash[game.away_team[:head_coach]] += 1 if game.away_team[:result] == "WIN"
+      end
+    end
+    coach_wins_hash
   end
   
   def games_played_in_season(season)
     team_games_hash = Hash.new { |hash, key| hash[key] = 0.0 }
     @games.each do |game_id, game|
       if game.season == season
-        team_games_hash[game.home_team_id] += 1
-        team_games_hash[game.away_team_id] += 1
+        team_games_hash[game.home_team[:head_coach]] += 1
+        team_games_hash[game.away_team[:head_coach]] += 1
       end
     end
     team_games_hash
@@ -25,23 +40,19 @@ module SeasonStatistics
   def winningest_coach(season)
     team_wins_hash = coach_results(season)
     team_games_hash = games_played_in_season(season)
-    team_wins_hash.merge(team_games_hash) do |team_id, wins, games|
+    team_wins_hash.merge!(team_games_hash) do |team_id, wins, games|
       wins / games
     end
     winning_team_id = team_wins_hash.key(team_wins_hash.values.max)
-    winning_team = @games.find {|game_id, game_object| game_object.home_team[:team_id] == winning_team_id}
-    winning_team[1].home_team[:head_coach]
   end
   
   def worst_coach(season)
     team_wins_hash = coach_results(season)
     team_games_hash = games_played_in_season(season)
-    team_wins_hash.merge(team_games_hash) do |team_id, wins, games|
+    team_wins_hash.merge!(team_games_hash) do |team_id, wins, games|
       wins / games
     end
     losing_team_id = team_wins_hash.key(team_wins_hash.values.min)
-    losing_team = @games.find {|game_id, game_object| game_object.home_team[:team_id] == losing_team_id}
-    losing_team[1].home_team[:head_coach]
   end
   
   def total_shots_by_team_season(season)

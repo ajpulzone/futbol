@@ -1,7 +1,7 @@
 module LeagueStatistics
 
   def count_of_teams
-    @teams.size.to_s
+    @teams.size
   end
 
   def best_offense
