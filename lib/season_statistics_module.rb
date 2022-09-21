@@ -44,21 +44,6 @@ module SeasonStatistics
     losing_team[1].home_team[:head_coach]
   end
   
-  # def most_accurate_team(season)
-  #   goals_and_shots = Hash.new { |hash, key| hash[key] = {'goals' => 0, 'shots' => 0}}
-  #   @games.each do |game_id, game_object|
-  #     goals_and_shots[game_object.away_team]['goals'] += game_object.away_team if game_object.season == season
-  #     goals_and_shots[game_object.away_team]['shots'] += game_object.away_team if game_object.season == season
-  #     goals_and_shots[game_object.home_team]['goals'] += game_object.home_team if game_object.season == season
-  #     goals_and_shots[game_object.home_team]['shots'] += game_object.home_team if game_object.season == season
-  #   end
-  #   accuracy = {}
-  #   accuracy.merge(goals_and_shots) do |team_id, |
-  # 
-  #   end
-  # end
-  # 
-  
   def total_shots_by_team_season(season)
     shots_by_team = Hash.new(0.0)
     @games.each do |game_id, game_object|
@@ -84,14 +69,23 @@ module SeasonStatistics
   def most_accurate_team(season)
     shots_by_team = total_shots_by_team_season(season)
     goals_by_team = goals_by_team(season)
-    
     goals_by_team.merge!(shots_by_team) do |team_id, goals, shots|
       goals / shots
     end
-    require "pry"; binding.pry
     winning_team_id = goals_by_team.key(goals_by_team.values.max)
-    winning_team = @games.find {|game_id, game_object| game_object.away_team[:team_id] == winning_team_id}
-    winning_team[1].away_team[:team_id]
+    winning_team = @teams.find  {|team_id, team_object| team_id == winning_team_id}
+    winning_team.last.team_name
+  end
+  
+  def least_accurate_team(season)
+    shots_by_team = total_shots_by_team_season(season)
+    goals_by_team = goals_by_team(season)
+    goals_by_team.merge!(shots_by_team) do |team_id, goals, shots|
+      goals / shots
+    end
+    losing_team_id = goals_by_team.key(goals_by_team.values.min)
+    losing_team = @teams.find  {|team_id, team_object| team_id == losing_team_id}
+    losing_team.last.team_name
   end
   
 end

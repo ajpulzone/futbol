@@ -137,6 +137,11 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.most_accurate_team('20122013')).to eq('Houston Dynamo')
   end
   
+  it "#least_accurate_team returns the name of the Team with the worst ratio of 
+  shots to goals for the season" do
+    expect(stat_tracker1.least_accurate_team('20122013')).to eq('Sporting Kansas City')
+  end
+  
   xit "4. #count_of_teams" do
     dummy_filepath = {teams: "./data/team_dummy.csv",
     games: './data/games_dummy_2.csv',
