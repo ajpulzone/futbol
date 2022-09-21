@@ -1,25 +1,27 @@
-require "rspec"
+require 'rspec'
 require './lib/stat_tracker'
-require "./lib/team"
+require './lib/team'
 require './lib/game'
+require './lib/game_statistics'
+require './lib/team_statistics'
+require './lib/team_game'
 
 RSpec.describe StatTracker do
-  let(:stat_tracker) {StatTracker.new}
-  dummy_filepath = {teams: "./data/teams.csv",
-                    games: './data/games_dummy1.2.csv',
-                    game_teams: './data/game_teams_dummy1.csv'
+  dummy_filepath = {teams: './data/teams.csv',
+                    games: './data/games_dummy_final.csv',
+                    game_teams: './data/game_teams_dummy_final.csv'
 
   }
-  let(:stat_tracker1) {StatTracker.from_csv(dummy_filepath)}
+  let(:stat_tracker) {StatTracker.from_csv(dummy_filepath)}
 
-  xit "1. exists" do
+  it "1. exists" do
     expect(stat_tracker).to be_a(StatTracker)
   end
 
-  xit "2. has readable attributes" do
-    expect(stat_tracker.teams_reader).to eq(nil)
-    expect(stat_tracker.games_reader).to eq(nil)
-    expect(stat_tracker.game_teams_reader).to eq(nil)
+  it "2. has readable attributes 'games' and 'teams' that are hashes by" do
+    expect(stat_tracker.teams).to be_a(Hash)
+    expect(stat_tracker.games).to be_a(Hash)
+  
   end
 
   xit "3. can parse CSV data" do
@@ -28,22 +30,19 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.teams_reader[4][:link]).to eq("/api/v1/teams/6")
   end
 
-  xit "#average_goals_per_game returns the average number of goals scored in a
+  it "#average_goals_per_game returns the average number of goals scored in a
   game across all seasons including both home and away goals (rounded to the
   nearest 100th)" do
-    expect(stat_tracker1.average_goals_per_game).to eq(4.43)
+    expect(stat_tracker.average_goals_per_game).to eq(3.64)
   end
 
-  xit "#average_goals_by_season returns the average number of goals scored in a
+  it "#average_goals_by_season returns the average number of goals scored in a
   game organized in a hash with season names as keys and a float representing
   the average number of goals in a game for that season as values" do
     result = {
-      '20122013' => 3.00,
-      '20162017' => 6.50,
-      '20152016' => 4.50,
-      '20132014' => 3.00
+      '20122013' => 3.64,
     }
-    expect(stat_tracker1.average_goals_by_season).to eq(result)
+    expect(stat_tracker.average_goals_by_season).to eq(result)
   end
 
   xit "#best_offense name of the team with the highest average number of goals
@@ -106,146 +105,48 @@ RSpec.describe StatTracker do
     expect(stat_tracker1.fewest_tackles('20122013')).to eq('New England Revolution')
   end
 
-  xit "4. #count_of_teams" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-    games: './data/games_dummy_2.csv',
-    game_teams: './data/game_teams.csv'
-    }
-
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.count_of_teams).to eq(5)
+  it "#. count_of_teams" do
+    expect(stat_tracker.count_of_teams).to eq(32)
   end
-
-  it "#. calculates without duplicates total goals in a game across all games" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams.csv'
-    }
-
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.unique_total_goals).to be_a(Array)
-    #we'll test the third element, which should have 1 home goal and 2 away goals
-    expect(stat_tracker.unique_total_goals[2]).to eq(4)
-    expect(stat_tracker.unique_total_goals.length).to eq(4)
-  end
-
-
 
   it "#. highest_total_score" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams.csv'
-
-    }
-    stat_tracker= StatTracker.from_csv(dummy_filepath)
     expect(stat_tracker.highest_total_score).to eq(5)
   end
 
   it "#. lowest_total_score" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams.csv'
-
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
     expect(stat_tracker.lowest_total_score).to eq(1)
   end
 
-  xit "#. total_number_of_games" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.total_number_of_games).to eq(10)
+  it "#. total_number_of_games" do
+    expect(stat_tracker.total_number_of_games).to eq(11)
   end
 
-  xit "#. percentage_home_wins" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.percentage_home_wins).to eq(0.30)
+  it "#. percentage_home_wins" do
+    expect(stat_tracker.percentage_home_wins).to eq(0.55)
   end
 
-  xit "#. percentage_visitor_wins" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.percentage_visitor_wins).to eq(0.20)
+  it "#. percentage_visitor_wins" do
+    expect(stat_tracker.percentage_visitor_wins).to eq(0.45) 
   end
 
-  xit "#. percentage_ties" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.percentage_ties).to eq(0.10)
+  it "#. percentage_ties" do
+    expect(stat_tracker.percentage_ties).to eq(0.00)
   end
 
-  xit "#. team_finder" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.team_finder("4")).to eq(stat_tracker.teams_reader[1])
-    expect(stat_tracker.team_finder("6")).to eq(stat_tracker.teams_reader[4])
-    expect(stat_tracker.team_finder("4")[0]).to eq("4")
-  end
-
-  it "#. team_info" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.team_info("1")).to eq({"team_id" => "1",
-                                                   "franchise_id" => "23",
-                                                   "team_name" => "Atlanta United",
-                                                   "abbreviation" => "ATL",
-                                                   "link" => "/api/v1/teams/1"
-    })
-  end
-
-  xit "#. average_win_percentage" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.average_win_percentage("6")).to eq(1.00)
+  it "#. can calculate average win percentage" do
+    expect(stat_tracker.average_win_percentage("17")).to eq(0.5)
   end
 
   it "#. count_of_games_by_season" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.count_of_games_by_season).to eq({"20112012" => 2, "20122013" => 6, "20132014" => 2})
+    expect(stat_tracker.count_of_games_by_season).to eq({"20122013" => 11})
   end
 
-  xit "#. most_goals_scored" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
+  it "7. can calculate the most goals scored for a team" do
     expect(stat_tracker.most_goals_scored("3")).to eq(2)
   end
 
-  xit "#. fewest_goals_scored" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.fewest_goals_scored("6")).to eq(2)
+  it "8. can calculate the least goals scored for a team" do
+    expect(stat_tracker.fewest_goals_scored("3")).to eq(1)
   end
 
   xit "#. coach_results" do
@@ -275,88 +176,27 @@ RSpec.describe StatTracker do
     expect(stat_tracker.winningest_coach("20122013")).to eq("Claude Julien")
   end
 
-  xit "#. games_by_team_by_result" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_3.csv',
-                      game_teams: './data/game_teams_dumdum_2.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    result = {"8" => 1}
-    expect(stat_tracker.games_by_team_by_result("3", "WIN")).to eq(result)
-    result = {"6" => 5}
-    expect(stat_tracker.games_by_team_by_result("3", "LOSS")).to eq(result)
+  it "#. games_by_team_by_result" do
+    expect(stat_tracker.games_by_team_by_result("3", "WIN")).to eq({"6" => 0})
+    expect(stat_tracker.games_by_team_by_result("3", "LOSS")).to eq({"6" => 5})
+    expect(stat_tracker.games_by_team_by_result("6", "WIN")).to eq({"3" => 5, "5" => 4})
   end
 
-  xit "#. games_totals_by_team for team" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_3.csv',
-                      game_teams: './data/game_teams_dumdum_2.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.game_totals_by_team("3")).to eq({"6" => 5, "8" => 1})
+  it "total_games_by_opponent" do
+    expect(stat_tracker.total_games_by_opponent("6")).to eq({"3" => 5, "5" => 4})
   end
 
-  xit "#. all_games_by_team" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_3.csv',
-                      game_teams: './data/game_teams_dumdum_2.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.all_games_by_team("3")).to include(stat_tracker.game_teams_reader[0], stat_tracker.game_teams_reader[2], stat_tracker.game_teams_reader[5], stat_tracker.game_teams_reader[7], stat_tracker.game_teams_reader[8], stat_tracker.game_teams_reader[10])
+  it "finds team name by giving team id" do
+    expect(stat_tracker.team_finder("3")).to eq("Houston Dynamo")
   end
 
-  xit "#. team_all_game_ids" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_3.csv',
-                      game_teams: './data/game_teams_dumdum_2.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.team_all_game_ids("3")).to eq(["2012030221", "2012030222", "2012030223", "2012030224", "2012030225", "2012030121"])
+  it "#. can determine favorite opponent" do
+    expect(stat_tracker.favorite_opponent("6")).to eq("Houston Dynamo")
   end
 
-  xit "#. favorite_opponent" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_3.csv',
-                      game_teams: './data/game_teams_dumdum_2.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-
-    expect(stat_tracker.favorite_opponent("3")).to eq("New York Red Bulls")
-  end
-
-  xit "#. rival" do
-    dummy_filepath = {teams: "./data/teams.csv",
-                      games: './data/games_dummy_3.csv',
-                      game_teams: './data/game_teams_dumdum_2.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
+  it "#. can determine rival" do
     expect(stat_tracker.rival("3")).to eq("FC Dallas")
   end
-
-  #Below is Rich's code for a parallel attempt on a helper method and favorite_opponent. We added to retain in case it works better with our I3 structure/Framework.
-
-  # it "#. w_l_by_team" do
-  #   dummy_filepath = {teams: "./data/teams.csv",
-  #                     games: './data/games_dummy_2.csv',
-  #                     game_teams: './data/game_teams_dumdum_rk.csv'
-  #   }
-
-  #   result = {'8' => 1}
-  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
-  #   expect(stat_tracker.w_l_by_team("3", 'WIN')).to eq(result)
-  # end
-
-  # it "#favorite_opponent" do
-  #   dummy_filepath = {teams: "./data/teams.csv",
-  #                     games: './data/games_dummy_2_rk.csv',
-  #                     game_teams: './data/game_teams_dumdum_rk.csv'
-  #   }
-
-  #   result = {'8' => 1}
-  #   stat_tracker = StatTracker.from_csv(dummy_filepath)
-  #   expect(stat_tracker.favorite_opponent('3')).to eq('New York Red Bulls')
-  #   expect(stat_tracker.favorite_opponent('6')).to eq('Houston Dynamo')
-  # end
 
   xit "#. winningest_coach" do
     dummy_filepath = {teams: "./data/team_dummy.csv",
@@ -377,23 +217,13 @@ RSpec.describe StatTracker do
   end
 
 
-
-  xit "# best_season: season with the hightest win percentage for a team" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-                      games: './data/games_dummy_2.csv',
-                      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.best_season("6")).to eq("20112012").or eq('20122013') #also has 100% for "20122013" as well
+  it "#. can determine best season for a team" do
+    expect(stat_tracker.best_season("6")).to eq("20122013")
   end
+  
 
-  xit "# worst_season: season with the lowest win percentage for a team" do
-    dummy_filepath = {teams: "./data/team_dummy.csv",
-      games: './data/games_dummy_2.csv',
-      game_teams: './data/game_teams_dumdum.csv'
-    }
-    stat_tracker = StatTracker.from_csv(dummy_filepath)
-    expect(stat_tracker.worst_season("3")).to eq("20112012") #team "17" also has 100% loss  for "20132014" as well
+  it "#. can determine best season for a team" do
+    expect(stat_tracker.worst_season("3")).to eq("20122013")
   end
 
 
@@ -415,6 +245,15 @@ RSpec.describe StatTracker do
     }
     stat_tracker = StatTracker.from_csv(dummy_filepath)
     expect(stat_tracker1.least_accurate_team('20122013')).to eq('New York City FC')
+  end
+
+  it "#. can list team info" do
+    expect(stat_tracker.team_info("1")).to eq({"team_id" => "1",
+    "franchise_id" => "23",
+    "team_name" => "Atlanta United",
+    "abbreviation" => "ATL",
+    "link" => "/api/v1/teams/1"
+    })
   end
 
   xit "#total_goals_by_team_season returns hash of teams as keys and values

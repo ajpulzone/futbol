@@ -1,8 +1,11 @@
-require "csv"
+require 'csv'
 require_relative './team'
 require_relative './game'
 require_relative './game_statistics'
-require './lib/team_statistics'
+require_relative './team_statistics'
+require_relative './team_game'
+
+
 
 class StatTracker
   include GameStatTracking
@@ -147,7 +150,7 @@ class StatTracker
   end
 
   def count_of_teams
-   @teams_reader.length
+   @teams.keys.length
   end
 
   def most_tackles(season)

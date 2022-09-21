@@ -21,10 +21,10 @@ module TeamStatTracking
 
   def worst_season(team_id)
     season_wins = Hash.new(0)
-    # @teams[team_id].team_games.each do |game_id, game_data|
-    #   season_wins[game_data.season] = 0
-    #   break
-    # end
+    @teams[team_id].team_games.each do |game_id, game_data|
+      season_wins[game_data.season] = 0
+      break
+    end
     @teams[team_id].team_games.each do |game_id, game_data|
         if game_data.result == "WIN"
           season_wins[game_data.season] += 1
@@ -65,6 +65,10 @@ module TeamStatTracking
   def games_by_team_by_result(team_id, game_result)
     result_by_team = Hash.new(0)
     @teams[team_id].team_games.each do |game_id, game_data|
+      result_by_team[game_data.opponent] = 0
+      break
+    end
+    @teams[team_id].team_games.each do |game_id, game_data|
       if game_data.result == game_result
         result_by_team[game_data.opponent] += 1
       end
@@ -101,6 +105,6 @@ module TeamStatTracking
   end
 
   def team_info(team_id)
-    @teams[team_id.to_sym].team_labels
+    @teams[team_id].team_labels
   end
 end

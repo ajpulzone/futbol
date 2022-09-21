@@ -79,7 +79,6 @@ module GameStatTracking
   def average_goals_by_season
     average_goals_per_season = Hash.new(0)
       goals_by_season.each do |season, goals|
-        # require "pry"; binding.pry
         average_goals_per_season[season] = (goals/(count_of_games_by_season[season])).round(2)
       end
     average_goals_per_season

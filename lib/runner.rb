@@ -1,8 +1,8 @@
 require './lib/stat_tracker'
-require "./lib/team"
-require "./lib/game"
-require "./lib/team_game"
-require "./lib/team_statistics"
+require './lib/team'
+require './lib/game'
+require './lib/team_game'
+require './lib/team_statistics'
 
 game_path = './data/games.csv'
 team_path = './data/teams.csv'
